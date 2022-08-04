@@ -8,6 +8,9 @@ use List::Util qw(sum);
 
 my ($input_fa,$hcov19_db_dir,$hcov19_db_name,$fa_name,$outdir);
 
+# longfei.fu
+# 2022-8-4 QIXI
+
 GetOptions(
 	"fa:s"     => \$input_fa,            # Needed
 	"dbdir:s"  => \$hcov19_db_dir,       # Needed
