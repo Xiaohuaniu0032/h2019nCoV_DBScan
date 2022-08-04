@@ -12,7 +12,7 @@ GetOptions(
 	"fa:s"     => \$input_fa,            # Needed
 	"dbdir:s"  => \$hcov19_db_dir,       # Needed
 	"dbname:s" => \$hcov19_db_name,      # Needed
-	"faname:s"  => \$fa_name,         # Needed
+	"faname:s"  => \$fa_name,            # Needed
 	"od:s"     => \$outdir,              # Needed
 	) or die "Please check your args\n";
 
