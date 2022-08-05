@@ -3,9 +3,13 @@ use warnings;
 use Data::Dumper;
 use FindBin qw/$Bin/;
 
-my ($align_file,$outfile) = @ARGV;
+my ($align_file,$outdir) = @ARGV;
 
-open O, ">$outfile" or die;
+my $align_file_name       = basename($align_file);
+my $variants_file         = "$outdir/$align_file_name\.nextalign.variants.xls";
+my $variants_summary_file = "$outdir/$align_file_name\.nextalign.variants.summary.xls";
+my $similarity_file       = "$outdir/$align_file_name\.similarity.xls";
+
 
 my @seq_name;
 my %seq_info;
@@ -13,16 +17,42 @@ my %seq_info;
 open IN, "$align_file" or die;
 while (<IN>){
 	chomp;
-	#print "$_\n";
 	my $header = $_;
 	$header =~ s/^\>//;# header
-	my $seq = <IN>;     # dna seq
+	my $seq = <IN>;    # seq
 	chomp $seq;
 	push @seq_name, $header;
 	$seq_info{$header} = $seq;
-	#print "$header\n";
 }
 close IN;
+
+
+if (!-d "$outdir/variants"){
+	`-d $outdir/variants`;
+}
+
+my $ref_seq_name  = "2019-nCoV";
+my $ref_seq_fa    = $seq_info{$ref_seq_name};
+
+for my $seq_name (@seq_name){
+	next if ($seq_name eq "2019-nCoV");
+	my $variants_file = "$outdir/variants/$seq_name\.variants.xls";
+	my $seq_sample = $seq_info{$seq_name};
+
+}
+
+
+sub cmp_two_seq{
+	my ($ref_seq,$query_seq) = @_;
+
+	my $ref_len = length($ref_seq);
+	my $query_len = length($query_seq);
+
+	
+
+}
+
+
 
 #print "@seq_name\n";
 
