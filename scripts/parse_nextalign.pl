@@ -8,13 +8,17 @@ my ($align_file,$cons_fa,$ins_file,$outdir) = @ARGV;
 my $align_file_name       = basename($align_file);
 my $variants_summary_file = "$outdir/$align_file_name\.nextalign.variants.summary.xls";
 my $similarity_file       = "$outdir/$align_file_name\.similarity.xls";
+my $qc_file               = "$outdir/$align_file_name\.qc.xls";
 
 
 open SUMMARY, ">$variants_summary_file" or die;
-print SUMMARY "Sample\tRef_fa_len\tConsensus_fa_len\tN_num\tN_pct\tEff_pos_start\tEff_pos_end\n";
+print SUMMARY "Sample\tVariants_Num\tSNP_Num\tInsertion_Num\tDeletion_Num\n";
 
 open SIM, ">$similarity_file" or die;
-print SIM "Sample\tRef_Name\tSimilarity\n";
+print SIM "Sample\t2019nCoV_Database_Seq\tSimilarity\n";
+
+open QC, ">$qc_file" or die;
+print QC "Sample\tConsensus_fa_len\tRef_fa_len\tN_num\tN_pct";
 
 
 my @cons_name;
@@ -98,38 +102,39 @@ if (!-d "$outdir/variants"){
 
 my $ref_seq_name  = "2019-nCoV";
 my $ref_seq_fa    = $seq_info{$ref_seq_name};
+my $ref_seq_len   = length($ref_seq_fa);
 
-
-for my $cons (@cons_name){
-	my %similarity;
-	# 只计算query seq和ref的相似度
-	# 跳过计算数据库中的序列和ref的相似度
-
-	for my $seq_name (@seq_name){
-		next if ($seq_name eq "2019-nCoV");
-		my $variants_file = "$outdir/variants/$seq_name\.variants.xls";
-
-	# 变异位点
+# 1) variants info [only cal vars info for query seq]
+for my $query_name (@cons_name){
+	my $query_seq = $cons_fa{$query_name};
+	my $vars_aref = &cmp_two_seq($ref_seq_fa,$query_seq,\%ins_variants,$query_name);
+	
+	my $variants_file = "$outdir/variants/$query_name\.variants.xls";
 	open O, ">$variants_file" or die;
-
-	my $q_seq = $seq_info{$seq_name};
-	my $vars_aref = &cmp_two_seq($ref_seq_fa,$q_seq,\%ins_variants,$seq_name);
+	
 	for my $var (@{$vars_aref}){
 		my @var = split /\:/, $var;
 		my $new_var = join("\t",@var);
 		print O "$seq_name\t$new_var\n";
 	}
 	close O;
+}
+
+# 2) variants summary
+
+# 3) cal QC for query seq
+for my $query_name (@cons_name){
+	my $query_seq = $cons_fa{$query_name};
 
 	# 计算query seq长度
-	my $q_seq_len = length($q_seq);
+	my $query_seq_len = length($query_seq);
 
 	# 计算query seq N个数/百分比
 	my $N_num = 0;
 	my $N_pct;
 
-	my @q_seq = split //, $q_seq;
-	for my $base (@q_seq){
+	my @query_seq = split //, $query_seq;
+	for my $base (@query_seq){
 		if ($base eq 'N'){
 			$N_num += 1;
 		}
@@ -139,16 +144,58 @@ for my $cons (@cons_name){
 		$N_pct = sprintf "%.2f", $N_num / $q_seq_len * 100;
 	}
 
-	# 计算和ref fa相似度
-	# match百分比
-	my $eff_pos_reg_aref = &get_eff_pos_region($ref_seq_fa,$q_seq);
-	my $eff_pos_start = $eff_pos_reg_aref->[0];
-	my $eff_pos_end   = $eff_pos_reg_aref->[1];
+	# 计算有效区间
+	#my $eff_pos_reg_aref = &get_eff_pos_region($ref_seq_fa,$query_seq);
+	#my $eff_pos_start = $eff_pos_reg_aref->[0];
+	#my $eff_pos_end   = $eff_pos_reg_aref->[1];
 
-	my $sim = &cal_similarity($ref_seq_fa,$q_seq,$eff_pos_start,$eff_pos_end);
-	$similarity{$seq_name} = $sim;
+	print QC "$query_name\t$query_seq_len\t$ref_seq_len\t$N_num\t$N_pct\n";
 }
+close QC;
 
+# 4) get top 10 most similar database sequences
+for my $query_name (@cons_name){
+	my $query_seq = $cons_fa{$query_name};
+my $sim = &cal_similarity($ref_seq_fa,$q_seq,$eff_pos_start,$eff_pos_end);
+	$similarity{$seq_name} = $sim;
+
+# 3) cal QC for query seq
+for my $query_name (@cons_name){
+	my $query_seq = $cons_fa{$query_name};
+
+	# 计算query seq长度
+	my $query_seq_len = length($query_seq);
+
+	# 计算query seq N个数/百分比
+	my $N_num = 0;
+	my $N_pct;
+
+	my @query_seq = split //, $query_seq;
+	for my $base (@query_seq){
+		if ($base eq 'N'){
+			$N_num += 1;
+		}
+	}
+
+	if ($N_num > 0 and $q_seq_len > 0){
+		$N_pct = sprintf "%.2f", $N_num / $q_seq_len * 100;
+	}
+
+	# 计算有效区间
+	#my $eff_pos_reg_aref = &get_eff_pos_region($ref_seq_fa,$query_seq);
+	#my $eff_pos_start = $eff_pos_reg_aref->[0];
+	#my $eff_pos_end   = $eff_pos_reg_aref->[1];
+
+	print QC "$query_name\t$query_seq_len\t$ref_seq_len\t$N_num\t$N_pct\n";
+}
+close QC;
+
+
+
+
+############################################################
+#########################Sub Func###########################
+############################################################
 
 sub cmp_two_seq{
 	my ($ref_seq,$query_seq,$ins_info_href,$query_name) = @_;
