@@ -4,81 +4,73 @@ use Data::Dumper;
 use FindBin qw/$Bin/;
 use File::Basename;
 
-#my $resdir = "/data/fulongfei/analysis/hiv/JSCDC";
-my $ref_fa = "/data/fulongfei/git_repo/HIVDrug/ref/K03455.fasta";
 
-my ($indir,$name) = @ARGV;
 
-my @runsh = glob "$indir/$name/*.sh";
+my ($ref_fa,$input_fa,$db_fa,$out_fa) = @ARGV;
 
-for my $sh (@runsh){
-	my $dir = dirname($sh);
-	my $name = basename($dir);
+open O, ">$out_fa" or die;
 
-	my $input_fa = "$dir/nextalign/$name\.aln.input.fa";
 
-	open O, ">$input_fa" or die;
-	
-	# write ref fasta
-	print O ">K03455.1\n";
-	my @ref_fa;
-	open REF, "$ref_fa" or die;
-	while (<REF>){
-		chomp;
-		next if /^$/;
-		next if /^\>/;
-		push @ref_fa, $_;
-	}
-	close REF;
-	my $ref_fa = join("",@ref_fa);
-	print O "$ref_fa\n";
-
-	# write CE fasta
-	my @CE_file = glob "$dir/CE/*.fas";
-	my $CE_file = $CE_file[0];
-
-	`/usr/bin/dos2unix $CE_file`;
-
-	my @CE_fa;
-	print O "\>$name\_CE\n";
-	open CE, "$CE_file" or die;
-	while (<CE>){
-		chomp;
-		next if /^$/;
-		next if /^\>/;
-		push @CE_fa, $_;
-	}
-	close CE;
-	my $ce_fa = join("",@CE_fa);
-	print O "$ce_fa\n";
-
-	# wirte IRMA
-	my $irma_file = "$dir/IRMA/Boxin_Region/consensusFreq20/amended_consensus/consensusFreq20.fa";
-	open IRMA, "$irma_file" or die;
-	while (<IRMA>){
-		chomp;
-		if (/^\>/){
-			print O "\>$name\_consensusFreq20\_IRMA\n";
-		}else{
-			print O "$_\n";
-		}
-	}
-	close IRMA;
-	
-	# write freebayesConsensus_v2
-	#my @freq = qw/2 5 10 15 20/;
-	my @freq = qw/20/;
-	for my $freq (@freq){
-		my $Freq_STR = "Freq".$freq; # Freq20
-		my $freebayes_fa = "$dir/freebayesConsensus_v2/$Freq_STR/$name\.freebayesConsensus\.$Freq_STR\.fasta";
-
-		open FA, "$freebayes_fa" or die;
-		while (<FA>){
-			chomp;
-			print O "$_\n";
-		}
-		close FA;
-	}
-
-	close O;
+# write ref fasta
+open REF, "$ref_fa";
+while (<REF>){
+	chomp;
+	next if /^$/;
+	print O "$_\n";
 }
+close REF;
+
+# write input_fa [generateConsensus.fasta]
+# generateConsensus.fasta is in one line format
+
+open IN, "$input_fa" or die;
+while (<IN>){
+	chomp;
+	next if (/^$/);
+	my $header = $_;
+	if ($header =~ /\s+/){
+		my @header = split /\s+/, $header;
+		my $new_header = join("_",@header);
+		print O "$new_header\n";
+	}else{
+		print O "$header\n";
+	}
+
+	my $seq = <IN>;
+	chomp $seq;
+	print O "$seq\n";
+}
+close IN;
+
+# write db_fa
+my %db_fa;
+my $new_seq_name;
+my @seq_name;
+
+open DB, "$db_fa" or die;
+while (<DB>){
+	chomp;
+	next if (/^$/);
+	if (/\>/){
+		my $seq_name = $_;
+		if ($seq_name =~ /\s+/){
+			my @seq_name = split /\s+/, $seq_name;
+			$new_seq_name = join("_",@seq_name);
+		}else{
+			$new_seq_name = $seq_name;
+		}
+		push @seq_name, $new_seq_name; # by db seq order
+	}else{
+		push @{$db_fa{$new_seq_name}}, $_;
+	}
+}
+close DB;
+
+for my $seq (@seq_name){
+	my @fa = @{$db_fa{$seq}};
+	my $fa = join("",@fa);
+	print O "$seq\n$fa\n";
+}
+
+close DB;
+close O;
