@@ -4,4 +4,4 @@ perl /data/fulongfei/git_repo/2019nCoV_DBScan/scripts/prepare_input_fa_to_align.
 
 /data/fulongfei/git_repo/2019nCoV_DBScan/bin/nextalign --sequences=/data/fulongfei/git_repo/2019nCoV_DBScan/test/input.aln.fasta --reference=/data/fulongfei/git_repo/2019nCoV_DBScan/reference/Ion_AmpliSeq_SARS-CoV-2-Insight.Reference.fa --output-dir=/data/fulongfei/git_repo/2019nCoV_DBScan/test --output-basename=2022-7-15 --in-order
 
-perl /data/fulongfei/git_repo/2019nCoV_DBScan/scripts/parse_nextalign.pl /data/fulongfei/git_repo/2019nCoV_DBScan/test/2022-7-15.aligned.fasta /data/fulongfei/git_repo/2019nCoV_DBScan/test
+perl /data/fulongfei/git_repo/2019nCoV_DBScan/scripts/parse_nextalign.pl /data/fulongfei/git_repo/2019nCoV_DBScan/test/2022-7-15.aligned.fasta /data/fulongfei/git_repo/2019nCoV_DBScan/test/consensus.fasta /data/fulongfei/git_repo/2019nCoV_DBScan/reference/Ion_AmpliSeq_SARS-CoV-2-Insight.Reference.fa /usr/bin/samtools /data/fulongfei/git_repo/2019nCoV_DBScan/test/2022-7-15.insertions.csv /data/fulongfei/git_repo/2019nCoV_DBScan/test
