@@ -1,4 +1,4 @@
-# 2019nCoV_DBScan
+# h2019nCoV_DBScan
 Using your customized 2019nCoV database sequences to do 2019nCoV mutation tracking.
 
 * Variant calling for query consensus fasta
