@@ -56,8 +56,14 @@ print O "$nextalign_bin --sequences\=$merge_fa --reference\=$ref_fasta --output-
 my $aln_file = "$outdir/$fa_name\.aligned.fasta";
 my $ins_file = "$outdir/$fa_name\.insertions.csv";
 
-print O "perl $Bin/scripts/parse_nextalign.pl $aln_file $new_input_fa $ref_fasta $samtools_bin $ins_file $outdir\n";
+print O "perl $Bin/scripts/parse_nextalign.pl $aln_file $new_input_fa $ref_fasta $samtools_bin $ins_file $outdir\n\n";
 
+# cal similarity based on variants calling
+my $similar_file = "$outdir/$fa_name\.similarity.based_on_variant_calling.xls";
+print O "perl $Bin/scripts/find_similar_db_seq_using_variants.pl $outdir/variants $outdir/variants/2019nCoV_DB_variants $similar_file\n\n";
 `chmod 755 $runsh`;
 
+# output top10 most similar db seq info
+my $top_10_file = "$outdir/$fa_name\.similarity.based_on_variant_calling.top10.xls";
+print O "perl $Bin/scripts/get_top10_most_similar_db_seq.pl $similar_file $top_10_file\n";
 close O;
