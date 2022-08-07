@@ -70,29 +70,36 @@ Sample_1277-1__2019-nCoV        2019-nCoV       21987   G       A
 
 ## 2. Top 20 similar sequence from 2019nCoV database
 
-> */outdir/*.similarity.xls*
+> */outdir/*.similarity.based_on_variant_calling.top10.xls*
 ```
-Query_Seq       2019nCoV_Database_Seq   Similarity      Macth_Num       Eff_length
-Sample_1277-1__2019-nCoV        hCoV-19/Gansu/IVDC-577/2022     99.57   29673   29800
-Sample_1277-1__2019-nCoV        hCoV-19/Liaoning/IVDC-DL-168/2021       99.57   29673   29800
-Sample_1277-1__2019-nCoV        hCoV-19/Liaoning/IVDC-DL-27/2021        99.57   29673   29800
-Sample_1277-1__2019-nCoV        hCoV-19/Heilongjiang/IVDC-HH-493/2021   99.57   29673   29800
-Sample_1277-1__2019-nCoV        hCoV-19/Liaoning/IVDC-DL-143/2021       99.57   29673   29800
-Sample_1277-1__2019-nCoV        hCoV-19/Liaoning/IVDC-DL-73/2021        99.57   29673   29800
-Sample_1277-1__2019-nCoV        hCoV-19/Liaoning/IVDC-DL-157/2021       99.57   29673   29800
-Sample_1277-1__2019-nCoV        hCoV-19/Liaoning/IVDC-DL-76/2021        99.57   29673   29800
-Sample_1277-1__2019-nCoV        hCoV-19/Liaoning/IVDC-DL-58/2021        99.57   29673   29800
-Sample_1277-1__2019-nCoV        hCoV-19/Shanghai/IVDC-613/2022  99.57   29673   29800
-Sample_1277-2__2019-nCoV        hCoV-19/Heilongjiang/IVDC-HH-415/2021   99.57   29673   29800
-Sample_1277-2__2019-nCoV        hCoV-19/Heilongjiang/IVDC-HH-417/2021   99.57   29673   29800
-Sample_1277-2__2019-nCoV        hCoV-19/Zhejiang/3853/2021      99.57   29673   29800
-Sample_1277-2__2019-nCoV        hCoV-19/Heilongjiang/IVDC-HH-483/2021   99.57   29673   29800
-Sample_1277-2__2019-nCoV        hCoV-19/InnerMongolia/IVDC-597/2022     99.57   29673   29800
-Sample_1277-2__2019-nCoV        hCoV-19/Zhejiang/3998/2021      99.57   29673   29800
-Sample_1277-2__2019-nCoV        hCoV-19/Yunnan/IVDC-567/2022    99.57   29673   29800
-Sample_1277-2__2019-nCoV        hCoV-19/Fujian/2022XG-2040/2022 99.57   29673   29800
-Sample_1277-2__2019-nCoV        hCoV-19/Beijing/IVDC-543/2022   99.57   29673   29800
-Sample_1277-2__2019-nCoV        hCoV-19/Liaoning/IVDC-DL-43/2021        99.57   29673   29800
+query_seq_name  db_seq_name     query_seq_var_num       db_seq_var_num  query_seq_uniq_var_num  db_seq_uniq_var_num     both_var_num    total_uniq_var_num      bothVar_to_uniqVar_pct
+Sample_1277-1__2019-nCoV        hCoV-19_Guizhou_IVDC-578_2022   78      72      7       1       71      79
+      89.87
+Sample_1277-1__2019-nCoV        hCoV-19_Guangdong_IVDC-603_2022 78      72      7       1       71      79
+      89.87
+Sample_1277-1__2019-nCoV        hCoV-19_Jilin_IVDC-556_2022     78      70      8       0       70      78
+      89.74
+Sample_1277-1__2019-nCoV        hCoV-19_Yunnan_IVDC-565_2022    78      71      8       1       70      79
+      88.61
+Sample_1277-1__2019-nCoV        hCoV-19_Chongqing_IVDC-610_2022 78      71      8       1       70      79
+      88.61
+Sample_1277-1__2019-nCoV        hCoV-19_Shanghai_IVDC-615_2022  78      74      7       3       71      81
+      87.65
+Sample_1277-1__2019-nCoV        hCoV-19_Fujian_2022XG-2039_2022 78      72      8       2       70      80
+      87.50
+Sample_1277-1__2019-nCoV        hCoV-19_Guangdong_IVDC-12-01_2021       78      70      9       1       69
+      79      87.34
+Sample_1277-1__2019-nCoV        hCoV-19_Yunnan_IVDC-562_2022    78      70      9       1       69      79
+      87.34
+Sample_1277-1__2019-nCoV        hCoV-19_Liaoning_IVDC-583_2022  78      70      9       1       69      79
+      87.34
+Sample_1277-2__2019-nCoV        hCoV-19_Guangdong_IVDC-603_2022 78      72      7       1       71      79
+      89.87
+Sample_1277-2__2019-nCoV        hCoV-19_Guizhou_IVDC-578_2022   78      72      7       1       71      79
+      89.87
+Sample_1277-2__2019-nCoV        hCoV-19_Jilin_IVDC-556_2022     78      70      8       0       70      78
+      89.74
+Sample_1277-2__2019-nCoV        hCoV-19_Chongqing_IVDC-610_2022 78      71      8       1       70      79
 
 ```
 ## 3. Query sequence QC info
