@@ -20,6 +20,12 @@ ADD h2019nCoV_DBScan /tools
 `docker build -t h2019ncov_dbscan:v1 .`
 
 
+### How to run
+
+```
+docker run --rm -v /root/Dockerfile/h2019nCoV_DBScan:/input -v /root/tools/test/h2019nCoV_DBScan:/output h2019ncov_dbscan:v1 perl /tools/2019nCoV_DBScan_pipeline.pl -fa /input/test/data/Auto_SARS-CoV-2_Insight_Research_Panel_-_530-2022-7-15_torrent-server_107.consensus.fasta -dbdir /input/database -faname 2022-7-15 -od /output
+```
+
 ### Note
 Before `docker build -t h2019ncov_dbscan:v1 .`, you need to cp `h2019nCoV_DBScan` whole dir on the `/data/fulongfei/git_repo/h2019nCoV_DBScan/Dockerfile` dir, just like below:
 
