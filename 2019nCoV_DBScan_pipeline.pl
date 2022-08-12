@@ -15,7 +15,7 @@ GetOptions(
 	"fa:s"        => \$input_fa,            # Needed
 	"dbdir:s"     => \$hcov19_db_dir,       # Needed
 	"faname:s"    => \$fa_name,             # Needed
-	"samtools:s"  => \$samtools_bin         # Default: /usr/bin/samtools
+	"samtools:s"  => \$samtools_bin,        # Default: /usr/bin/samtools
 	"od:s"        => \$outdir,              # Needed
 	) or die "Please check your args\n";
 
