@@ -19,6 +19,26 @@ ADD h2019nCoV_DBScan /tools
 
 `docker build -t h2019ncov_dbscan:v1 .`
 
+```
+ionadmin@15WPC02:~/fulongfei/tools/h2019nCoV_DBScan/Dockerfile$ docker build -t h2019ncov_dbscan:v1 .
+Sending build context to Docker daemon  45.61MB
+Step 1/4 : FROM ubuntu:14.04
+ ---> 6e4f1fe62ff1
+Step 2/4 : MAINTAINER longfei.fu
+ ---> Running in b96e9f0ee4f5
+Removing intermediate container b96e9f0ee4f5
+ ---> 08bff6966669
+Step 3/4 : WORKDIR /tools
+ ---> Running in 96eaf9f5a92e
+Removing intermediate container 96eaf9f5a92e
+ ---> baaa15a799ea
+Step 4/4 : ADD h2019nCoV_DBScan /tools
+ ---> 661dc122d9cf
+Successfully built 661dc122d9cf
+Successfully tagged h2019ncov_dbscan:v1
+
+```
+
 
 ### How to run
 
