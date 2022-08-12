@@ -6,9 +6,9 @@
 
 ### Dockerfile
 ```
-FROM fsz_substr_finding_problem:v2
+FROM ubuntu:14.04
 MAINTAINER longfei.fu
-RUN apt-get update && apt-get install -y samtools
+#RUN apt-get update && apt-get install -y samtools
 WORKDIR /tools
 ADD h2019nCoV_DBScan /tools
 ```
