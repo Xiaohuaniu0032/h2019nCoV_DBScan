@@ -6,14 +6,13 @@ use Data::Dumper;
 use FindBin qw/$Bin/;
 use List::Util qw(sum);
 
-my ($input_fa,$samtools_bin,$hcov19_db_dir,$fa_name,$outdir);
+my ($input_fa,$hcov19_db_dir,$fa_name,$outdir);
 
 # longfei.fu
 # 2022-8-4 QIXI
 
 GetOptions(
 	"fa:s"        => \$input_fa,            # Needed
-	"samtools:s"  =>\$samtools_bin,         # Default: /usr/bin/samtools
 	"dbdir:s"     => \$hcov19_db_dir,       # Needed
 	"faname:s"    => \$fa_name,             # Needed
 	"od:s"        => \$outdir,              # Needed
@@ -21,10 +20,7 @@ GetOptions(
 
 
 # default value
-if (not defined $samtools_bin){
-	$samtools_bin = "/usr/bin/samtools";
-}
-
+my $samtools_bin  = "$Bin/bin/samtools";
 my $nextalign_bin = "$Bin/bin/nextalign";
 my $ref_fasta     = "$Bin/reference/Ion_AmpliSeq_SARS-CoV-2-Insight.Reference.fa";
 
