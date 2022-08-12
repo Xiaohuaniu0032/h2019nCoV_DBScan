@@ -67,3 +67,6 @@ print O "perl $Bin/scripts/find_similar_db_seq_using_variants.pl $outdir/variant
 my $top_10_file = "$outdir/$fa_name\.similarity.based_on_variant_calling.top10.xls";
 print O "perl $Bin/scripts/get_top10_most_similar_db_seq.pl $similar_file $top_10_file\n";
 close O;
+
+`chmod 755 $runsh`;
+`$runsh`;
