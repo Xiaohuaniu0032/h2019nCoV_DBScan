@@ -159,9 +159,14 @@ for my $name (@samples){
 
 	# output top10 most similar db seq info
 	my $top_10_file = "$outdir/$name/$name\.similarity.based_on_variant_calling.top10.xls";
-	print O "perl $Bin/scripts/get_top10_most_similar_db_seq.pl $similar_file $top_10_file\n";
-	close O;
+	print O "perl $Bin/scripts/get_top10_most_similar_db_seq.pl $similar_file $top_10_file\n\n";
 
+	# vcMerge
+	my $query_sample_var_file = "$outdir/$name/variants/$name\.variants.xls";
+	my $merged_file = "$outdir/$name/$name\.vcMerged.xls";
+	print O "perl $Bin/scripts/merge_two_sample_variants.pl $query_sample_var_file $name $top_10_file $outdir/$name/variants/2019nCoV_DB_variants $merged_file\n";
+
+	close O;
 	`chmod 755 $runsh`;
 	#`$runsh`;
 
