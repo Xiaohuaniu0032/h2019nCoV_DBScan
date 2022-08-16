@@ -1,0 +1,101 @@
+---
+title: "2019nCoV_DBScan新冠溯源报告"
+author:
+date:
+output:
+ html_document:
+ code_folding: hide
+ toc_float: TRUE
+---
+
+```{r setup,echo=FALSE}
+knitr::opts_chunk$set(warning=FALSE,
+                      message=FALSE,
+                      echo=FALSE,
+                      cache=FALSE,
+                      tidy=FALSE,
+                      error=FALSE
+
+
+        )
+```
+
+
+# 2. 一致性序列QC信息
+```{r,include=FALSE}
+datastat <- read.table("/data/fulongfei/git_repo/h2019nCoV_DBScan/test/data2_results/fasta.qc.xls",h=T)
+```
+
+```{r,echo=FALSE}
+DT::datatable(datastat,rownames=FALSE,options=list(pageLength=5,scrollX=TRUE))
+```
+
+###### __备注：__
+###### Query_Seq：一致性序列名称；
+###### Consensus_fa_len：一致性序列长度；
+###### Ref_fa_len：参考序列长度；
+###### N_num：一致性序列N碱基个数；
+###### N_pct：一致性序列N碱基百分比；
+
+
+# 3. 一致性序列变异信息
+```{r,include=FALSE}
+datastat <- read.table("/data/fulongfei/git_repo/h2019nCoV_DBScan/test/data2_results/vcMerged.xls",h=T)
+```
+
+```{r,echo=FALSE}
+DT::datatable(datastat,rownames=FALSE,options=list(pageLength=30,scrollX=TRUE))
+```
+
+###### __备注：__
+###### Chr：染色体名称；
+###### Pos：染色体位置；
+###### Ref：参考序列该位置的碱基；
+###### Alt：一致性序列该位置的碱基；
+
+
+# 4. 一致性序列变异信息总结
+```{r,include=FALSE}
+datastat <- read.table("/data/fulongfei/git_repo/h2019nCoV_DBScan/test/data2_results/variants.summary.xls",h=T)
+```
+
+```{r,echo=FALSE}
+DT::datatable(datastat,rownames=FALSE,options=list(pageLength=5,scrollX=TRUE))
+```
+
+###### __备注：__
+###### Query_Seq：一致性序列名称；
+###### Variants_Num：突变个数（SNP+Ins+Del)；
+###### SNP_Num：SNP个数；
+###### Insertion_Num：Ins个数；
+###### Deletion_Num：Del个数；
+
+
+# 5. Top10最相似序列
+```{r,include=FALSE}
+datastat <- read.table("/data/fulongfei/git_repo/h2019nCoV_DBScan/test/data2_results/similarity.based_on_variant_calling.top10.xls",h=T)
+```
+
+```{r,echo=FALSE}
+DT::datatable(datastat,rownames=FALSE,options=list(pageLength=10,scrollX=TRUE))
+```
+
+
+# 6. vcMerged Top10序列变异结果
+```{r,include=FALSE}
+datastat <- read.table("/data/fulongfei/git_repo/h2019nCoV_DBScan/test/data2_results/vcMerged.xls",h=T)
+```
+
+```{r,echo=FALSE}
+DT::datatable(datastat,rownames=FALSE,options=list(pageLength=30,scrollX=TRUE))
+```
+
+# 7. 结果下载
+
+   下载全部分析结果 [all_results.zip](../results.zip)
+
+
+
+#### 免责声明：
+
+本报告仅用于科学研究，不可用于临床诊断和治疗。

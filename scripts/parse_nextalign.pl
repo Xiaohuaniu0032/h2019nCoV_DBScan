@@ -8,10 +8,10 @@ use File::Basename;
 
 my ($align_file,$cons_fa,$ref_fa_file,$samtools_bin,$ins_file,$outdir) = @ARGV;
 
-my $align_file_name       = basename($align_file);
-my $variants_summary_file = "$outdir/$align_file_name\.nextalign.variants.summary.xls";
-my $similarity_file       = "$outdir/$align_file_name\.similarity.xls";
-my $qc_file               = "$outdir/$align_file_name\.qc.xls";
+
+my $variants_summary_file = "$outdir/variants.summary.xls";
+my $similarity_file       = "$outdir/similarity.xls";
+my $qc_file               = "$outdir/fasta.qc.xls";
 
 
 open SUMMARY, ">$variants_summary_file" or die;
@@ -121,7 +121,6 @@ if (!-d "$outdir/variants"){
 }
 
 
-
 ################### variants info ###################
 # only cal vars info for query seq
 for my $query_name (@cons_name){
@@ -144,7 +143,6 @@ for my $query_name (@cons_name){
 	my $variants_file = "$outdir/variants/$query_name\.variants.xls";
 	open O, ">$variants_file" or die;
 	print O "Sample\tChr\tPos\tRef\tAlt\n";
-	
 	
 	foreach my $pos (sort {$a <=> $b} keys %{$vars_href}){
 		my $var = $vars_href->{$pos};
@@ -185,7 +183,6 @@ for my $query_name (@cons_name){
 	print SUMMARY "$query_name\t$var_num\t$snp_num\t$ins_num\t$del_num\n";
 }
 close SUMMARY;
-
 
 # wirte database seq's var
 if (!-d "$outdir/variants/2019nCoV_DB_variants"){

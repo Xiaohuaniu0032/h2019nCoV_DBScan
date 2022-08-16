@@ -6,16 +6,18 @@ use Data::Dumper;
 use FindBin qw/$Bin/;
 use List::Util qw(sum);
 
-my ($input_fa,$input_fa_meta_file,$hcov19_db_file,$samtools_bin,$outdir);
+my ($input_fa,$input_fa_name,$input_fa_meta_file,$hcov19_db_file,$samtools_bin,$if_docker_run,$outdir);
 
 # longfei.fu
 # 2022-8-4 QIXI
 
 GetOptions(
 	"fa:s"        => \$input_fa,            # Needed
+	"n:s"         => \$input_fa_name,       # Needed
 	"meta_f:s"    => \$input_fa_meta_file,  # Needed 
 	"dbfile:s"    => \$hcov19_db_file,      # Needed
 	"samtools:s"  => \$samtools_bin,        # Default: /usr/bin/samtools
+	"dk!"         => \$if_docker_run,       # Optional
 	"od:s"        => \$outdir,              # Needed
 	) or die "Please check your args\n";
 
@@ -29,145 +31,59 @@ my $nextalign_bin = "$Bin/bin/nextalign";
 my $ref_fasta     = "$Bin/reference/Ion_AmpliSeq_SARS-CoV-2-Insight.Reference.fa";
 
 
-# consensus fa样本信息
 
-my @samples; # 1)remove >; 2) if seq_header has '\s+' or '/'
-my %sample_fa;
+my $runsh = "$outdir/run\_$input_fa_name\.sh";
+open O, ">$runsh" or die;
 
-my $seq_header;
-open IN, "$input_fa" or die;
-while (<IN>){
-	chomp;
-	next if /^$/;
-	if (/^\>/){
-		$seq_header = $_;
-		$seq_header =~ s/^\>//;
-		
-		# >hCoV-19/Jiangxi/JXCDC-18/2022
-		# >Sample 1277-1__2019-nCoV
-		
-		my $new_header;
-		if ($seq_header =~ /\s+/){
-			my @seq_header = split /\s+/, $seq_header;
-			$new_header = join("_",@seq_header);
-		}else{
-			$new_header = $seq_header;
-		}
+# process input fasta
+my $processed_input_fa = "$outdir/input.concensus.fasta";
+print O "perl $Bin/scripts/pre_process_input_fa.pl $input_fa $processed_input_fa\n\n";
 
-		if ($new_header =~ /\//){
-			my @new_header = split /\//, $new_header;
-			$seq_header = join("_",@new_header);
-		}else{
-			$seq_header = $new_header;
-		}
+# merge fa
+my $merged_fa = "$outdir/input.aln.fasta";
+print O "cat $ref_fasta $processed_input_fa $hcov19_db_file \>$merged_fa\n\n";
 
-		push @samples, $seq_header;
-	}else{
-		push @{$sample_fa{$seq_header}}, $_;
-	}
-}
-close IN;
+# do align
+#if (!-d "$outdir/nextalign"){
+#	`mkdir $outdir/nextalign`;
+#}
+print O "$nextalign_bin --sequences\=$merged_fa --reference\=$ref_fasta --output-dir\=$outdir --output-basename\=nextalign --in-order\n\n";
 
+# parse aln file
+my $aln_file = "$outdir/nextalign.aligned.fasta";
+my $ins_file = "$outdir/nextalign.insertions.csv";
 
-# meta信息
-my @col = qw/cons_fa_name virus collect_data seq_data province length host age sex Nextstrain_clade pangolin_lineage submitting_lab submitter/;
+print O "perl $Bin/scripts/parse_nextalign.pl $aln_file $processed_input_fa $ref_fasta $samtools_bin $ins_file $outdir\n\n";
 
-my %meta;
-open META, "$input_fa_meta_file" or die;
-my $meta_header = <META>;
-chomp $meta_header;
+# merge query seq's variants
+my $vcMerged_file = "$outdir/vcMerged.xls";
+print O "perl $Bin/scripts/merge_query_variants.pl $outdir/variants $vcMerged_file\n\n";
 
-while (<META>){
-	chomp;
-	my @arr = split /\t/;
-	my $name = $arr[0];
+# cal similarity based on variants calling
+my $similar_file = "$outdir/similarity.based_on_variant_calling.xls";
+print O "perl $Bin/scripts/find_similar_db_seq_using_variants.pl $outdir/variants $outdir/variants/2019nCoV_DB_variants $similar_file\n\n";
 
-	my $new_name;
-	if ($name =~ /\s+/){
-		my @name = split /\s+/, $name;
-		$new_name = join("_",@name);
-	}else{
-		$new_name = $name;
-	}
+# output top10 most similar db seq info
+my $top_10_file = "$outdir/similarity.based_on_variant_calling.top10.xls";
+print O "perl $Bin/scripts/get_top10_most_similar_db_seq.pl $similar_file $top_10_file\n\n";
 
-	my $final_name;
-	if ($new_name =~ /\//){
-		my @new_name = split /\//, $new_name;
-		$final_name = join("_",@new_name);
-	}else{
-		$final_name = $new_name;
-	}
+# vcMerge
+my $query_sample_var_file = "$outdir/variants/variants.xls";
+my $merged_file = "$outdir/vcMerged.xls";
+#print O "perl $Bin/scripts/merge_two_sample_variants.pl $query_sample_var_file $top_10_file $outdir/variants/2019nCoV_DB_variants $merged_file\n";
+
+close O;
+
+`chmod 755 $runsh`;
 
 
-	$meta{$final_name} = $_;
-}
-close META;
-
-
-
-
-
-# 每个样本新建一个目录
-for my $name (@samples){
-	if (!-d "$outdir/$name"){
-		`mkdir -p $outdir/$name`;
-	}
-
-	my @fa = @{$sample_fa{$name}};
-	my $sample_fa = join("",@fa);
-
-	# write sample fasta
-	my $sample_fa_file = "$outdir/$name/$name\.fasta";
+# run auto if in docker env
+if (defined $if_docker_run){
+	`$runsh`;
 	
-	open O, ">$sample_fa_file" or die;
-	print O "\>$name\n";
-	print O "$sample_fa";
-	close O;
-
-	# write meta info
-	my $sample_meta_file = "$outdir/$name/$name\.metadata.csv";
-	open O, ">$sample_meta_file" or die;
-	if (exists $meta{$name}){
-		my $info = $meta{$name};
-		print O "$meta_header\n";
-		print O "$info\n";
-	}else{
-		print O "NA\tNA\tNA\n";
-	}
-	close O;
-
-	my $runsh = "$outdir/$name/runsh\_$name\.sh";
-
-	open O, ">$runsh" or die;
-	# merge fa
-	my $merge_fa = "$outdir/$name/input.aln.fasta";
-	print O "perl $Bin/scripts/prepare_input_fa_to_align.pl $ref_fasta $sample_fa_file $hcov19_db_file $merge_fa\n\n";
-
-	# do align
-	print O "$nextalign_bin --sequences\=$merge_fa --reference\=$ref_fasta --output-dir\=$outdir/$name --output-basename\=nextalign --in-order\n\n";
-
-	# parse aln file
-	my $aln_file = "$outdir/$name/nextalign.aligned.fasta";
-	my $ins_file = "$outdir/$name/nextalign.insertions.csv";
-
-	print O "perl $Bin/scripts/parse_nextalign.pl $aln_file $sample_fa_file $ref_fasta $samtools_bin $ins_file $outdir/$name\n\n";
-
-	# cal similarity based on variants calling
-	my $similar_file = "$outdir/$name/$name\.similarity.based_on_variant_calling.xls";
-	print O "perl $Bin/scripts/find_similar_db_seq_using_variants.pl $outdir/$name/variants $outdir/$name/variants/2019nCoV_DB_variants $similar_file\n\n";
-
-
-	# output top10 most similar db seq info
-	my $top_10_file = "$outdir/$name/$name\.similarity.based_on_variant_calling.top10.xls";
-	print O "perl $Bin/scripts/get_top10_most_similar_db_seq.pl $similar_file $top_10_file\n\n";
-
-	# vcMerge
-	my $query_sample_var_file = "$outdir/$name/variants/$name\.variants.xls";
-	my $merged_file = "$outdir/$name/$name\.vcMerged.xls";
-	print O "perl $Bin/scripts/merge_two_sample_variants.pl $query_sample_var_file $name $top_10_file $outdir/$name/variants/2019nCoV_DB_variants $merged_file\n";
-
-	close O;
-	`chmod 755 $runsh`;
-	#`$runsh`;
-
+	# make Rmd report if runing in docker
+	`R -e "rmarkdown::render('/tools/Report_Rmd/h2019nCoV_DBScan.Rmd')"`;
+	`mv /tools/Report_Rmd/h2019nCoV_DBScan.html /output/h2019nCoV_DBScan.html`;
+	# `cp /output/Ion-HBV.html /output/reports/Ion-HBV.html`;
+	# `zip -r /output/results.zip /output/reports`;
 }
