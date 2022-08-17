@@ -20,18 +20,11 @@ knitr::opts_chunk$set(warning=FALSE,
         )
 ```
 
-# 1.样本meta信息
-```{r,include=FALSE}
-datastat <- read.table("/output/metadata.csv")
-```
 
-```{r,echo=FALSE}
-DT::datatable(datastat,rownames=FALSE,options=list(pageLength=5,scrollX=TRUE))
-```
 
 # 2. 一致性序列QC信息
 ```{r,include=FALSE}
-datastat <- read.table("/output/fasta.qc.xls")
+datastat <- read.table("/output/fasta.qc.xls",h=T)
 ```
 
 ```{r,echo=FALSE}
@@ -48,7 +41,7 @@ DT::datatable(datastat,rownames=FALSE,options=list(pageLength=5,scrollX=TRUE))
 
 # 3. 一致性序列变异信息
 ```{r,include=FALSE}
-datastat <- read.table("/output/variants/vcMerged.xls")
+datastat <- read.table("/output/variants/vcMerged.xls",h=T)
 ```
 
 ```{r,echo=FALSE}
@@ -64,7 +57,7 @@ DT::datatable(datastat,rownames=FALSE,options=list(pageLength=30,scrollX=TRUE))
 
 # 4. 一致性序列变异信息总结
 ```{r,include=FALSE}
-datastat <- read.table("/output/variants.summary.xls")
+datastat <- read.table("/output/variants.summary.xls",h=T)
 ```
 
 ```{r,echo=FALSE}
@@ -81,7 +74,7 @@ DT::datatable(datastat,rownames=FALSE,options=list(pageLength=5,scrollX=TRUE))
 
 # 5. Top10最相似序列
 ```{r,include=FALSE}
-datastat <- read.table("/output/similarity.based_on_variant_calling.top10.xls")
+datastat <- read.table("/output/similarity.based_on_variant_calling.top10.xls",h=T)
 ```
 
 ```{r,echo=FALSE}
@@ -90,13 +83,7 @@ DT::datatable(datastat,rownames=FALSE,options=list(pageLength=10,scrollX=TRUE))
 
 
 # 6. vcMerged Top10序列变异结果
-```{r,include=FALSE}
-datastat <- read.table("/output/vcMerged.xls")
-```
 
-```{r,echo=FALSE}
-DT::datatable(datastat,rownames=FALSE,options=list(pageLength=30,scrollX=TRUE))
-```
 
 # 7. 结果下载
 

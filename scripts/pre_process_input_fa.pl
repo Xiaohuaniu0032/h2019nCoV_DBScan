@@ -10,10 +10,6 @@ my ($input_fa,$out_fa) = @ARGV;
 
 open O, ">$out_fa" or die;
 
-my $seq_header;
-my @samples;
-my %sample_fa;
-
 open IN, "$input_fa" or die;
 while (<IN>){
 	chomp;
@@ -55,6 +51,6 @@ for my $name (@samples){
 
 	
 	print O "\>$name\n";
-	print O "$sample_fa\n";
+	print O "$sample_fa";
 }
 close O;

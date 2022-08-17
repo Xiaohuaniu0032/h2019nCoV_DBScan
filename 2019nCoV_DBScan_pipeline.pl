@@ -83,7 +83,7 @@ if (defined $if_docker_run){
 	
 	# make Rmd report if runing in docker
 	`R -e "rmarkdown::render('/tools/Report_Rmd/h2019nCoV_DBScan.Rmd')"`;
-	`mv /tools/Report_Rmd/h2019nCoV_DBScan.html /output/h2019nCoV_DBScan.html`;
+	`mv /tools/Report_Rmd/h2019nCoV_DBScan.html /output/report.html`;
 	# `cp /output/Ion-HBV.html /output/reports/Ion-HBV.html`;
 	# `zip -r /output/results.zip /output/reports`;
 }
