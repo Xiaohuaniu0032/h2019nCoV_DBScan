@@ -24,7 +24,7 @@ GetOptions(
 
 # default value
 if (not defined $samtools_bin){
-	$samtools_bin = "/usr/bin/samtools";
+	$samtools_bin = "/root/miniconda3/bin/samtools"; # docker path
 }
 
 my $nextalign_bin = "$Bin/bin/nextalign";
