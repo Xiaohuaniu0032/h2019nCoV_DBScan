@@ -79,6 +79,7 @@ close O;
 
 # run auto if in docker env
 if (defined $if_docker_run){
+	#print "hehe\n";
 	`$runsh`;
 	
 	# make Rmd report if runing in docker

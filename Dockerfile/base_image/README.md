@@ -47,6 +47,11 @@ docker save ubuntu_miniconda_base_r_rmarkdown:v1 | gzip >ubuntu_miniconda_base_r
 
 ```
 
+## Load tar.gz file
+```
+docker load <ubuntu_miniconda_base_r_rmarkdown_v1.tar.gz
+```
+
 ## Build your app image
 
 Your Dockerfile:
