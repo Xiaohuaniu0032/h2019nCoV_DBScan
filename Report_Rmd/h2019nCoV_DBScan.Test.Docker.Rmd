@@ -23,7 +23,7 @@ knitr::opts_chunk$set(warning=FALSE,
 
 # 2. 一致性序列QC信息
 ```{r,include=FALSE}
-datastat <- read.table("/data/fulongfei/git_repo/h2019nCoV_DBScan/test/data2_results/fasta.qc.xls",h=T)
+datastat <- read.table("/tools/test/data2_results/fasta.qc.xls",h=T)
 ```
 
 ```{r,echo=FALSE}
