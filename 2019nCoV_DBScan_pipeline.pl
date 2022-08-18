@@ -72,19 +72,19 @@ my $query_sample_var_file = "$outdir/variants/variants.xls";
 my $merged_file = "$outdir/vcMerged.xls";
 #print O "perl $Bin/scripts/merge_two_sample_variants.pl $query_sample_var_file $top_10_file $outdir/variants/2019nCoV_DB_variants $merged_file\n";
 
-close O;
+if (defined $if_docker_run){
+	# make Rmd report if runing in docker
+	my $cmd = "R -e \"rmarkdown::render('/tools/Report_Rmd/h2019nCoV_DBScan.Rmd')\"";
+	print O "$cmd\n";
+	print O "mv /tools/Report_Rmd/h2019nCoV_DBScan.html /output/report.html\n";
+	#print O "cp /output/Ion-HBV.html /output/reports/Ion-HBV.html\n";
+	#print O "zip -r /output/results.zip /output/reports\n";
+}
 
 `chmod 755 $runsh`;
-
+close O;
 
 # run auto if in docker env
 if (defined $if_docker_run){
-	#print "hehe\n";
 	`$runsh`;
-	
-	# make Rmd report if runing in docker
-	`R -e "rmarkdown::render('/tools/Report_Rmd/h2019nCoV_DBScan.Rmd')"`;
-	`mv /tools/Report_Rmd/h2019nCoV_DBScan.html /output/report.html`;
-	# `cp /output/Ion-HBV.html /output/reports/Ion-HBV.html`;
-	# `zip -r /output/results.zip /output/reports`;
 }
